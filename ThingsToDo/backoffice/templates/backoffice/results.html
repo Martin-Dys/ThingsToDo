@@ -1,0 +1,9 @@
+<h1>{{ task.name }}</h1>
+
+<ul>
+{% for subtask in task.subtask_set.all %}
+    <li>{{ subtask.name }} -- {{ subtask.order }} order{{ subtask.order|pluralize }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'backoffice:detail' task.id %}">Change Order?</a>

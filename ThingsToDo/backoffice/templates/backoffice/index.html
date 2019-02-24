@@ -1,7 +1,7 @@
 {% if latest_task_list %}
     <ul>
     {% for task in latest_task_list %}
-    <li><a href="{% url 'detail' task.id %}">{{ task.name }}</a></li>
+    <li><a href="{% url 'backoffice:detail' task.id %}">{{ task.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

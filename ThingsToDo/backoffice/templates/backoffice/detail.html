@@ -1,6 +1,12 @@
 <h1>{{ task.name }}</h1>
-<ul>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'backoffice:subtask' task.id %}" method="post">
+{% csrf_token %}
 {% for subtask in task.subtask_set.all %}
-    <li>{{ subtask.name }}</li>
+    <input type="radio" name="subtask" id="task{{ forloop.counter }}" value="{{ subtask.id }}">
+    <label for="task{{ forloop.counter }}">{{ subtask.name }}</label><br>
 {% endfor %}
-</ul>
+<input type="submit" value="Subtask">
+</form>

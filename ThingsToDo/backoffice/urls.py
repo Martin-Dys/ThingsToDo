@@ -3,6 +3,8 @@ from django.urls import path
 
 from . import views
 
+app_name = 'backoffice'
+
 urlpatterns = [
     # ex: /backoffice/
     path('', views.index, name='index'),
