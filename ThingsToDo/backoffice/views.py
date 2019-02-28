@@ -1,8 +1,8 @@
+from .models import Task, Subtask
+"""
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from .models import Task, Subtask
 from django.urls import reverse
-
 
 def index(request):
     latest_task_list = Task.objects.order_by('-start_date')[:10]
@@ -34,3 +34,15 @@ def subtask(request, task_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('backoffice:results', args=(task.id,)))
+"""
+
+from rest_framework import generics
+from .serializers import TaskSerializer
+
+class ListTaskView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
