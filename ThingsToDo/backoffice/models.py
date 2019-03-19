@@ -7,8 +7,8 @@ class Task(models.Model):
         blank=True,
         null=True,)
     priority = models.IntegerField(default=0)
-    start_date = models.DateTimeField('start date')
-    end_date = models.DateTimeField('end date')
+    start_date = models.DateTimeField('start_date')
+    end_date = models.DateTimeField('end_date')
     place = models.CharField(
         max_length=200, 
         blank=True,

@@ -1,4 +1,82 @@
+from rest_framework import generics
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import status
+
+from .decorators import validate_request_data
 from .models import Task, Subtask
+ 
+
+from rest_framework import generics
+from .serializers import TaskSerializer
+
+class ListTaskView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+    @validate_request_data
+    def post(self, request, *args, **kwargs):
+        a_task = Task.objects.create(
+            name=request.data["name"],
+            description=request.data["description"],
+            priority=request.data["priority"],
+            start_date=request.data["start_date"],
+            end_date=request.data["end_date"],
+        )
+        return Response(
+            data=TaskSerializer(a_task).data,
+            status=status.HTTP_201_CREATED
+        )
+
+
+class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+    def get(self, request, *args, **kwargs):
+        try:
+            a_task = self.queryset.get(pk=kwargs["pk"])
+            return Response(TaskSerializer(a_task).data)
+        except Task.DoesNotExist:
+            return Response(
+                data={
+                    "message": "Task with id: {} does not exist".format(kwargs["pk"])
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    @validate_request_data
+    def put(self, request, *args, **kwargs):
+        try:
+            a_task = self.queryset.get(pk=kwargs["pk"])
+            serializer = TaskSerializer()
+            updated_task = serializer.update(a_task, request.data)
+            return Response(TaskSerializer(updated_task).data)
+        except Task.DoesNotExist:
+            return Response(
+                data={
+                    "message": "Task with id: {} does not exist".format(kwargs["pk"])
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            a_task = self.queryset.get(pk=kwargs["pk"])
+            a_task.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Task.DoesNotExist:
+            return Response(
+                data={
+                    "message": "Task with id: {} does not exist".format(kwargs["pk"])
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+
+
+
 """
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -35,14 +113,3 @@ def subtask(request, task_id):
         # user hits the Back button.
         return HttpResponseRedirect(reverse('backoffice:results', args=(task.id,)))
 """
-
-from rest_framework import generics
-from .serializers import TaskSerializer
-
-class ListTaskView(generics.ListAPIView):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-
-class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
